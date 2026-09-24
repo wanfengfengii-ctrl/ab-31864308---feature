@@ -68,6 +68,24 @@
         <span id="runStatus" class="run-status"></span>
       </div>
       <div id="validationBox" class="validation" hidden></div>
+
+      <!-- 单链路漂移复原（仅当完整矩阵未通过原有校验时出现） -->
+      <div id="repairEntry" class="repair-entry" hidden>
+        <h3>③ 单链路漂移复原</h3>
+        <div class="hint">
+          假定仅有一对端点的往返时延被仪表漂移污染：指定疑似端点对，其余全部读数作为固定证据，
+          以精确有理数求仍能形成规范无根树的真实时延闭区间，并穷尽复核区间内每个三位小数候选。
+        </div>
+        <div class="repair-controls">
+          <label class="inline-label">疑似端点对
+            <select id="repP"></select>
+            <span class="arrow">–</span>
+            <select id="repQ"></select>
+          </label>
+          <button id="btnRepair" class="btn btn-small" type="button">分析该链路能否单独修正</button>
+        </div>
+        <div id="repairOut" class="repair-out"></div>
+      </div>
     </section>
 
     <!-- 右栏：结果 -->
