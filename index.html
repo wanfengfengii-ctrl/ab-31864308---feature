@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>无源光纤监测网 · 隐藏分路与熔接结构重建工作台</title>
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">⏺</span>
+      <div>
+        <h1>无源光纤监测网 · 隐藏拓扑重建工作台</h1>
+        <p class="subtitle">仅保留端点往返时延矩阵 · 精确有理数计算 · 纯前端，无业务后端</p>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <button id="btnSampleTree" class="btn btn-ghost" type="button">载入：树度量样例</button>
+      <button id="btnSampleStar" class="btn btn-ghost" type="button">载入：星型样例</button>
+      <button id="btnSampleBadT" class="btn btn-ghost" type="button">载入：三角反例</button>
+      <button id="btnSampleBad4" class="btn btn-ghost" type="button">载入：四点反例</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- 左栏：数据录入 -->
+    <section class="panel" id="panelInput">
+      <div class="panel-head">
+        <h2>① 端点与距离矩阵</h2>
+        <div class="head-actions">
+          <label class="check-label" title="勾选后编辑任一格会自动同步其对称位置；取消勾选可手工制造不对称矩阵以观察校验报错">
+            <input type="checkbox" id="chkMirror" checked /> 编辑时自动镜像对称
+          </label>
+          <button id="btnAdd" class="btn btn-small" type="button">＋ 增加端点</button>
+          <button id="btnRemove" class="btn btn-small" type="button">－ 删除末个</button>
+        </div>
+      </div>
+
+      <div class="hint">
+        端点 <strong id="epCount">0</strong> 个（允许 4–40 个唯一编号）；矩阵须对称、对角为 0、
+        其余为最多三位小数的正数。单元格可直接编辑，支持 Tab / 方向键移动。
+      </div>
+
+      <div id="gridWrap" class="grid-wrap">
+        <table id="matrixTable" class="matrix"></table>
+      </div>
+
+      <div class="io-block">
+        <div class="io-row">
+          <label class="btn btn-small" for="fileInput">📄 导入 CSV / TXT</label>
+          <input id="fileInput" type="file" accept=".csv,.txt,text/plain" hidden />
+          <button id="btnParseText" class="btn btn-small" type="button">⤵ 解析下方文本</button>
+          <button id="btnFillText" class="btn btn-small" type="button">⤴ 当前矩阵转文本</button>
+          <button id="btnExport" class="btn btn-small" type="button">⬇ 导出 CSV</button>
+          <button id="btnClear" class="btn btn-small btn-danger-ghost" type="button">清空</button>
+        </div>
+        <textarea id="importText" spellcheck="false" placeholder=
+"可粘贴完整矩阵后点击“解析下方文本”。支持纯矩阵：
+0,1.5,2.25
+1.5,0,3.1
+2.25,3.1,0
+或带表头 / 行标签的 CSV（首行：,A,B,C …）。"></textarea>
+      </div>
+
+      <div class="run-block">
+        <button id="btnRun" class="btn btn-primary" type="button">▶ 启动重建</button>
+        <span id="runStatus" class="run-status"></span>
+      </div>
+      <div id="validationBox" class="validation" hidden></div>
+    </section>
+
+    <!-- 右栏：结果 -->
+    <section class="panel" id="panelResult">
+      <div class="panel-head">
+        <h2>② 重建拓扑与路径核算</h2>
+        <div class="head-actions" id="topoTools" hidden>
+          <label class="inline-label">布局
+            <select id="selLayout">
+              <option value="radial">径向（等角）</option>
+              <option value="cladogram">直角分支图</option>
+            </select>
+          </label>
+          <label class="inline-label">视图根节点
+            <select id="selRoot"></select>
+          </label>
+          <label class="check-label"><input type="checkbox" id="chkWeights" checked /> 显示边权</label>
+        </div>
+      </div>
+
+      <div id="emptyResult" class="empty">
+        <p>导入或编辑矩阵后点击“启动重建”。</p>
+        <p class="muted">
+          计算先把矩阵统一缩放为整数并转为精确有理数；先逐项验证三角不等式，再做四点判据；
+          通过后以邻接法还原无根树，收缩零权内部边，并逐对叶节点复核路径长度。
+        </p>
+      </div>
+
+      <div id="resultBody" hidden>
+        <div id="statsLine" class="stats-line"></div>
+        <div id="treeWrap" class="tree-wrap">
+          <svg id="treeSvg" xmlns="http://www.w3.org/2000/svg">
+            <g id="treeViewport"></g>
+          </svg>
+          <div class="svg-tip muted">滚轮缩放 · 拖拽平移 · 点击叶节点可填入下方路径端点</div>
+        </div>
+
+        <div class="path-block">
+          <h3>任意两端点路径核算</h3>
+          <div class="path-controls">
+            <label>起点 <select id="selFrom"></select></label>
+            <span class="arrow">⇄</span>
+            <label>终点 <select id="selTo"></select></label>
+            <button id="btnPath" class="btn btn-small" type="button">核算路径</button>
+          </div>
+          <div id="pathSummary" class="path-summary" hidden></div>
+          <div class="table-scroll">
+            <table id="pathTable" class="path-table">
+              <thead>
+                <tr><th>#</th><th>经由节点</th><th>本段边权（精确值 / 十进制）</th><th>累计长度</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footnote">
+    全部计算在浏览器内以 BigInt 有理数完成，不发起任何业务网络请求；静态资源可离线运行。
+  </footer>
+
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

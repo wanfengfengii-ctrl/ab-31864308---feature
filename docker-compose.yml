@@ -1,0 +1,34 @@
+# Compose 编排：静态应用 + verify 验收服务
+# 宿主机端口通过 .env 或环境变量 HOST_PORT 配置（默认 8080）
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: pon-topology-workbench:latest
+    container_name: pon-workbench-web
+    ports:
+      # 宿主机端口可配置：HOST_PORT:容器 80
+      - "${HOST_PORT:-8080}:80"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/healthz"]
+      interval: 10s
+      timeout: 3s
+      start_period: 5s
+      retries: 5
+
+  # 验收服务：默认不随 up 启动，通过 `docker compose run --rm verify` 执行。
+  # 它先跑算法/解析层的全部自动化测试，再对 web 服务做健康检查与资源/首页校验。
+  verify:
+    image: node:22-alpine
+    container_name: pon-workbench-verify
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace
+    environment:
+      WEB_URL: http://web:80
+    depends_on:
+      web:
+        condition: service_healthy
+    entrypoint: ["sh", "tests/verify.sh"]

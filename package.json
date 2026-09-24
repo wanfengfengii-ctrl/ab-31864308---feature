@@ -1,0 +1,15 @@
+{
+  "name": "pon-topology-workbench",
+  "version": "1.0.0",
+  "private": true,
+  "description": "无源光纤监测网隐藏分路/熔接结构重建工作台（纯前端、精确有理数、无业务后端）",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "verify": "sh tests/verify.sh",
+    "serve": "node scripts/static-server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
