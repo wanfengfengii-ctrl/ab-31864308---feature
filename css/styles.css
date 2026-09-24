@@ -350,3 +350,95 @@ select {
   font-size: 11.5px;
   padding: 10px 0 24px;
 }
+
+/* ---------- 单链路漂移复原 ---------- */
+.panel-drift { grid-column: 1 / -1; }
+.drift-result { margin-top: 10px; }
+.drift-grid {
+  display: grid;
+  grid-template-columns: minmax(380px, 500px) 1fr;
+  gap: 16px;
+  align-items: start;
+}
+@media (max-width: 1080px) {
+  .drift-grid { grid-template-columns: 1fr; }
+}
+
+.drift-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.drift-table th {
+  text-align: left;
+  background: #202a48;
+  color: #cdd8f2;
+  padding: 6px 8px;
+  width: 118px;
+  vertical-align: top;
+  font-weight: 600;
+}
+.drift-table td { padding: 6px 8px; border-bottom: 1px solid #232e4e; line-height: 1.6; }
+.drift-table .num { font-family: Consolas, monospace; color: var(--hl); font-weight: 600; }
+.drift-table .frac { color: var(--muted); font-family: Consolas, monospace; font-size: 11px; }
+.drift-table .note { color: var(--muted); font-size: 11.5px; }
+
+.interval-bar {
+  position: relative;
+  height: 22px;
+  background: #0d1322;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  margin: 8px 0 4px;
+}
+.interval-bar .seg {
+  position: absolute;
+  top: 0; bottom: 0;
+  background: rgba(56, 211, 159, 0.22);
+  border-left: 2px solid var(--ok);
+  border-right: 2px solid var(--ok);
+}
+.interval-bar .mark-x0,
+.interval-bar .mark-corr {
+  position: absolute;
+  top: -5px;
+  width: 2px;
+  height: 32px;
+}
+.interval-bar .mark-x0 { background: var(--bad); }
+.interval-bar .mark-corr { background: var(--hl); }
+.interval-legend {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.interval-legend .sw {
+  display: inline-block;
+  width: 10px; height: 10px;
+  border-radius: 2px;
+  margin-right: 4px;
+  vertical-align: -1px;
+}
+.sw-ok { background: rgba(56, 211, 159, 0.5); }
+.sw-x0 { background: var(--bad); }
+.sw-corr { background: var(--hl); }
+
+.drift-tree {
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background:
+    radial-gradient(900px 500px at 50% 0%, rgba(79,140,255,0.07), transparent 70%),
+    #0d1322;
+  overflow: hidden;
+  height: 380px;
+}
+.drift-tree svg { width: 100%; height: 100%; display: block; cursor: grab; }
+.drift-tree svg.dragging { cursor: grabbing; }
+.drift-actions { display: flex; align-items: center; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+
+.validation.warn {
+  border-color: rgba(245, 166, 35, 0.55);
+  background: rgba(245, 166, 35, 0.08);
+  color: #ffe1ad;
+}
+.validation.warn .kind { background: var(--warn); color: #2a1c05; }

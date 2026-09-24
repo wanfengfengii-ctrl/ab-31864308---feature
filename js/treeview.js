@@ -54,9 +54,9 @@ function rootTree(tree, adj, root) {
 }
 
 // 主渲染
-// opts: { layout: 'radial'|'cladogram', rootId, showWeights, onLeafClick }
+// opts: { layout: 'radial'|'cladogram', rootId, showWeights, onLeafClick, viewport }
 export function renderTree(svg, tree, labels, opts) {
-  const viewport = svg.querySelector('#treeViewport');
+  const viewport = svg.querySelector(opts.viewport || '#treeViewport');
   viewport.innerHTML = '';
 
   const adj = buildAdj(tree);
@@ -226,8 +226,8 @@ export function renderTree(svg, tree, labels, opts) {
 }
 
 // 简单的缩放/平移控制
-export function attachPanZoom(svg) {
-  const viewport = svg.querySelector('#treeViewport');
+export function attachPanZoom(svg, viewportSel) {
+  const viewport = svg.querySelector(viewportSel || '#treeViewport');
   const state = { k: 1, tx: 0, ty: 0 };
   function apply() {
     viewport.setAttribute('transform', `translate(${state.tx} ${state.ty}) scale(${state.k})`);

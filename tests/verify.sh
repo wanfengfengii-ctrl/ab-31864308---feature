@@ -23,7 +23,7 @@ if [ -n "$WEB_URL" ]; then
     *"无源光纤监测网"*"隐藏拓扑重建工作台"*) echo "首页内容检查通过。" ;;
     *) echo "首页内容检查失败。" >&2; exit 1 ;;
   esac
-  for asset in js/app.js js/metric.js js/fraction.js js/treeview.js css/styles.css; do
+  for asset in js/app.js js/metric.js js/fraction.js js/treeview.js js/drift.js css/styles.css; do
     code="$(wget -qS -O /dev/null "$WEB_URL/$asset" 2>&1 | awk '/HTTP\//{print $2; exit}')"
     if [ "$code" != "200" ]; then
       echo "静态资源 $asset 返回 $code" >&2

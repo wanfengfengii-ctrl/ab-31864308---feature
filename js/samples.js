@@ -68,3 +68,12 @@ export function sampleFourPointBad() {
   ];
   return { labels, cells };
 }
+
+// 漂移污染样例：树度量样例中 d(A,B) 被一次仪表漂移污染为 9.000（真值 1.900）。
+// A、B 是挂接在同一内部节点的“樱桃”端点对，复原区间为 (0.300, 4.300] 的三位小数网格。
+export function sampleDrift() {
+  const { labels, cells } = sampleTree();
+  const i = labels.indexOf('A'), j = labels.indexOf('B');
+  cells[i][j] = cells[j][i] = '9.000';
+  return { labels, cells };
+}

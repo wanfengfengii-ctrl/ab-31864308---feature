@@ -20,6 +20,7 @@
       <button id="btnSampleStar" class="btn btn-ghost" type="button">载入：星型样例</button>
       <button id="btnSampleBadT" class="btn btn-ghost" type="button">载入：三角反例</button>
       <button id="btnSampleBad4" class="btn btn-ghost" type="button">载入：四点反例</button>
+      <button id="btnSampleDrift" class="btn btn-ghost" type="button">载入：漂移污染样例</button>
     </div>
   </header>
 
@@ -124,6 +125,32 @@
           </div>
         </div>
       </div>
+    </section>
+
+    <!-- 单链路漂移复原：仅当完整矩阵未通过校验时出现 -->
+    <section class="panel panel-drift" id="panelDrift" hidden>
+      <div class="panel-head">
+        <h2>②′ 单链路漂移复原</h2>
+        <div class="head-actions">
+          <label class="inline-label">疑似端点
+            <select id="selDriftP"></select>
+          </label>
+          <span class="arrow">⇄</span>
+          <label class="inline-label">疑似端点
+            <select id="selDriftQ"></select>
+          </label>
+          <button id="btnDrift" class="btn btn-small" type="button">◎ 计算允许区间</button>
+        </div>
+      </div>
+
+      <div class="hint">
+        完整矩阵未通过校验。若怀疑是某一对端点的往返时延被一次仪表漂移污染，可将其视为唯一可能失真的读数：
+        其余读数作为固定证据，以缩放后的精确有理数求出仍能形成规范无根树的 <strong>d(P,Q) 闭区间</strong>；
+        区间内每个可表示到三位小数的取值都会重新通过三角不等式、四点判据、邻接重建与逐对路径核算。
+        修改输入、端点标签或任一矩阵格将自动撤下本复原结论。
+      </div>
+
+      <div id="driftResult" class="drift-result"></div>
     </section>
   </main>
 
